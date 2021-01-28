@@ -16,8 +16,8 @@ class PaymentZoneImporter(GeoJsonImporter):
     Imports paymentzones data
     """
 
-    def import_payment_zones(self, geojson_file_path):
-        payment_zone_dicts = self.read_and_parse(geojson_file_path)
+    def import_payment_zones(self, geojson_file_path, geojson_file_url=None):
+        payment_zone_dicts = self.read_and_parse(geojson_file_path, geojson_file_url)
         count = self._save_payment_zones(payment_zone_dicts)
         logger.info('Created or updated {} payment zones'.format(count))
 

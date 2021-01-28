@@ -1,48 +1,21 @@
-FROM python:3.7-slim as appbase
+FROM python:3
 
-ENV PYTHONBUFFERED 1
+WORKDIR /usr/src/app
 
-RUN apt-get update  \
-    && \
-    apt-get install --no-install-recommends -y \
-      gdal-bin \
-      python3-gdal \
-      netcat \
-      libpq-dev \
-      build-essential
-
-WORKDIR /app
-
-COPY requirements.txt ./requirements.txt
-
-RUN pip install --no-cache-dir -r requirements.txt \
-    && \
-    apt-get remove -y build-essential libpq-dev \
-    && \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && \
-    rm -rf /var/lib/apt/lists/* \
-    && \
-    rm -rf /var/cache/apt/archives
-
+RUN apt-get update && apt-get install -y \
+  libpq-dev \
+  postgresql \
+  postgis \
+  binutils \
+  libproj-dev \
+  gdal-bin
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 
-ENTRYPOINT ["/app/django-entrypoint.sh"]
+RUN ["chmod", "+x", "waitAndRun.sh"]
 
-# TODO: Production environment
-# Production environment
-# CMD ["production"]
-
-
-# Development environment
-FROM appbase as development
-
-COPY requirements-*.txt ./
-
-RUN pip install --no-cache-dir \
-    -r requirements-dev.txt \
-    -r requirements-style.txt \
-    -r requirements-test.txt
-
-CMD ["development"]
+CMD []

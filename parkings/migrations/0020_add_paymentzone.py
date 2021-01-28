@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('number', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(3)], verbose_name='zone number')),
                 ('name', models.CharField(max_length=40, verbose_name='name')),
-                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=3879, verbose_name='geometry')),
+                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326, verbose_name='geometry')),
             ],
             options={
                 'abstract': False,

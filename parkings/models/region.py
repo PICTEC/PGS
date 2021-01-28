@@ -23,7 +23,7 @@ class RegionQuerySet(models.QuerySet):
 
 class Region(TimestampedModelMixin, UUIDPrimaryKeyMixin):
     name = models.CharField(max_length=200, blank=True, verbose_name=_("name"))
-    geom = gis_models.MultiPolygonField(srid=3879, verbose_name=_("geometry"))
+    geom = gis_models.MultiPolygonField(srid=4326, verbose_name=_("geometry"))
     capacity_estimate = models.PositiveIntegerField(
         blank=True, null=True,
         verbose_name=_("capacity estimate"),

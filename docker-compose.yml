@@ -1,29 +1,81 @@
-version: "3.7"
+version: '3'
 
 services:
   db:
-    image: postgis/postgis:10-3.0
-    environment:
-      POSTGRES_DB: parkkihubi
-      POSTGRES_PASSWORD: parkkihubi
-      POSTGRES_USER: parkkihubi
-    volumes:
-      - db_data:/var/lib/postgresql/data
-  api:
     build:
-      context: "."
-      target: ${BUILD_TARGET:-development}
+      context: .
+      dockerfile: Dockerfile-postgres
     environment:
-      DATABASE_URL: >-
-          postgis://parkkihubi:parkkihubi@db/parkkihubi
-    depends_on:
-      - db
-    stdin_open: true
-    tty: true
+      - POSTGRES_USER=${DB_USER_MIGRATION}
+      - POSTGRES_PASSWORD=${DB_MIGRATION_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_USER_RUNTIME=${DB_USER_RUNTIME}
+      - DB_RUNTIME_PASSWORD=${DB_RUNTIME_PASSWORD}
     ports:
-      - "127.0.0.1:8000:8000"
+      - "5432:5432"
     volumes:
-      - .:/app
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+  web:
+    links:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - "db"
+    environment:
+      - DEBUG=${DEBUG}
+      - TIER=${TIER}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
 
-volumes:
-  db_data:
+      - SERVICE_PORT=${SERVICE_PORT}
+      - DB_USER_MIGRATION=${DB_USER_MIGRATION}
+      - DB_MIGRATION_PASSWORD=${DB_MIGRATION_PASSWORD}
+      - DB_USER_RUNTIME=${DB_USER_RUNTIME}
+      - DB_RUNTIME_PASSWORD=${DB_RUNTIME_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_SERVICE_PORT=${DB_SERVICE_PORT}
+
+      - LANGUAGE_CODE=${LANGUAGE_CODE}
+      - TIME_ZONE=${TIME_ZONE}
+      - ADMIN_TIME_ZONE=${ADMIN_TIME_ZONE}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - CONSOLE_EMAIL=${CONSOLE_EMAIL}
+
+      - DEFAULT_ENFORCEMENT_DOMAIN=${DEFAULT_ENFORCEMENT_DOMAIN}
+      - DEFAULT_ENFORCEMENT_DOMAIN_ABBREVIATION=${DEFAULT_ENFORCEMENT_DOMAIN_ABBREVIATION}
+
+      - PARKING_AREAS_ADDRESS=${PARKING_AREAS_ADDRESS}
+      - PARKING_AREAS_PATH=${PARKING_AREAS_PATH}
+      - PAYMENT_ZONES_ADDRESS=${PAYMENT_ZONES_ADDRESS}
+      - PAYMENT_ZONES_PATH=${PAYMENT_ZONES_PATH}
+      - TERMINALS_ADDRESS=${TERMINALS_ADDRESS}
+      - TERMINALS_LOCAL=${TERMINALS_LOCAL}
+      - REGIONS_ADDRESS=${REGIONS_ADDRESS}
+      - REGIONS_PATH=${REGIONS_PATH}
+
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+
+    command: ["./waitAndRun.sh"]
+  dashboard:
+    build:
+      context: ./dashboard/
+    environment:
+      - REACT_APP_API_CENTER=${REACT_APP_API_CENTER}
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
+      - REACT_APP_SERVICE_PORT=${REACT_APP_SERVICE_PORT}
+    ports:
+      - 80:80
+    depends_on:
+      - "web"

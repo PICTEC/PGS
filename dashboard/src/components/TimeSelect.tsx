@@ -9,6 +9,16 @@ import 'react-datetime/css/react-datetime.css';
 
 import './TimeSelect.css';
 
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
+
 export interface Props extends ReactDatetime.DatetimepickerProps {
     autoUpdate?: boolean;
     onAutoUpdateChange?: (newValue: boolean) => void;
@@ -138,7 +148,7 @@ class AutoUpdatingDatetime extends ReactDatetime {
                             active={(this.state as {autoUpdate?: boolean}).autoUpdate}
                         >
                             <i className={iconClass}/>
-                            <span className="text"> Pidä ajan tasalla</span>
+                            <span className="text"> {lang.currentDate}</span>
                         </Button>
                     </InputGroupButton>
                 </InputGroup>
@@ -180,14 +190,14 @@ export default class TimeSelect extends React.Component<Props> {
                 <Row>
                     <Col className="shift-buttons">
                         <ButtonGroup size="sm" className="btn-group-left">
-                            {timeShiftButton('-1 vk', -7 * 24 * 60)}
-                            {timeShiftButton('-1 pv', -1 * 24 * 60)}
-                            {timeShiftButton('-1 t', -60)}
+                            {timeShiftButton('-1 ' + lang.week, -7 * 24 * 60)}
+                            {timeShiftButton('-1 ' + lang.day, -1 * 24 * 60)}
+                            {timeShiftButton('-1 ' + lang.hour, -60)}
                         </ButtonGroup>
                         <ButtonGroup size="sm" className="btn-group-right">
-                            {timeShiftButton('+1 t', 60)}
-                            {timeShiftButton('+1 pv', 1 * 24 * 60)}
-                            {timeShiftButton('+1 vk', 7 * 24 * 60)}
+                            {timeShiftButton('+1 ' + lang.hour, 60)}
+                            {timeShiftButton('+1 ' + lang.day, 1 * 24 * 60)}
+                            {timeShiftButton('+1 ' + lang.week, 7 * 24 * 60)}
                         </ButtonGroup>
                     </Col>
                 </Row>

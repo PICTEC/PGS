@@ -6,6 +6,16 @@ import 'react-table/react-table.css';
 
 import { Parking, ParkingProperties, RootState } from '../types';
 
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
+
 interface ParkingData extends ParkingProperties {
     id: string;
 }
@@ -35,34 +45,34 @@ function mapStateToProps(state: RootState): Partial<TableProps> {
 
     const columns = [
         {
-            Header: 'Tunniste',
+            Header: lang.id,
             accessor: 'id',
         }, {
-            Header: 'Rekisterinumero',
+            Header: lang.registrationNumber,
             accessor: 'registrationNumber',
         }, {
-            Header: 'Operaattori',
+            Header: lang.operatorName,
             accessor: 'operatorName',
         }, {
-            Header: 'Maksuvyöhyke',
+            Header: lang.zone,
             accessor: 'zone',
         }, {
-            Header: 'Lippuautomaatin numero',
+            Header: lang.terminalNumber,
             accessor: 'terminalNumber',
         }, {
-            Header: 'Aloitusaika',
+            Header: lang.timeStart,
             id: 'timeStart',
             accessor: (d: ParkingData) => formatTime(d.timeStart),
         }, {
-            Header: 'Loppumisaika',
+            Header: lang.timeEnd,
             id: 'timeEnd',
             accessor: (d: ParkingData) => formatTime(d.timeEnd),
         }, {
-            Header: 'Luotu',
+            Header: lang.createdAt,
             id: 'createdAt',
             accessor: (d: ParkingData) => formatTime(d.createdAt),
         }, {
-            Header: 'Päivitetty',
+            Header: lang.modifiedAt,
             id: 'modifiedAt',
             accessor: (d: ParkingData) => formatTime(d.modifiedAt),
         },

@@ -1,126 +1,157 @@
-[![Build status](https://travis-ci.org/City-of-Helsinki/parkkihubi.svg?branch=master)](https://travis-ci.org/City-of-Helsinki/parkkihubi)
-[![codecov](https://codecov.io/gh/City-of-Helsinki/parkkihubi/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/parkkihubi)
-[![Requirements](https://requires.io/github/City-of-Helsinki/parkkihubi/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/parkkihubi/requirements/?branch=master)
+# Parking Get Smart - Data Hub
 
-# Parking hub
+It is a generic version of Parkkihubi (https://github.com/City-of-Helsinki/parkkihubi) datahub, which is Django-based REST API for processing parking data. There were made changes to original parkkihubi, to allow easier deployment of the hub for other cities.
 
-Django-based REST API for processing parking data.
+## Getting Started
 
-## Requirements
+The whole application was dockerized and it is ready for easy deployment. Below are summarized all variables and files necessary for proper working of the hub.
 
-* Python 3.x
-* PostgreSQL + PostGIS
+### Prerequisites
 
-## Development
+For work with the hub you need to install docker (https://docs.docker.com/get-docker/) and docker-compse (https://docs.docker.com/compose/install/) before. Please check links given before for your platform installation procedures.
 
-### Install required system packages
 
-#### PostgreSQL
+### Running
 
-The recommended versions for postgresql and postgis are at least 9.4 and 2.2 respectively.
+To run database, web application and dashboard you need to simply run command
+```
+docker-compose up
+```
+this will run three docker containers based on your environment variables.
 
-    # Ubuntu 16.04
-    sudo apt-get install python3-dev libpq-dev postgresql postgis
+#### Environment variables
 
-#### GeoDjango extra packages
+There is a list of environment variables used during running docker images.
 
-    # Ubuntu 16.04
-    sudo apt-get install binutils libproj-dev gdal-bin
+```
+DDEBUG=TRUE                             # Start web application in debug mode
+TIER=dev                                # Start web application in development mode
+SECRET_KEY=secretKey                    # Secret key for web application
+ALLOWED_HOSTS="['*']"                   # Hosts allowed to connect with web application
+SERVICE_PORT=8000                       # On which port web application will be availabe
+LANGUAGE_CODE=en                        # Language for web application
+TIME_ZONE=UTC                           # Timezone for web application
+ADMIN_TIME_ZONE=Europe/Helsinki         # Administrator time for web application
 
-### Creating a virtualenv
+DJANGO_SUPERUSER_PASSWORD=pass          # Init password for web application superuser
+DJANGO_SUPERUSER_USERNAME=admin         # User name for web application superuser
+DJANGO_SUPERUSER_EMAIL=test@mail.com    # Email address of web application superuser
 
-Create a Python 3.x virtualenv either using the traditional `virtualenv` tool or using the great `virtualenvwrapper` toolset. Assuming the former, [once installed](https://virtualenvwrapper.readthedocs.io/en/latest/), simply do:
+DEFAULT_FROM_EMAIL=test@mail.com        # Email address for sending authorization keys
+EMAIL_HOST=mail.host                    # Email host for sending authorization keys
+EMAIL_PORT=1025                         # Email port for sending authorization keys
+EMAIL_HOST_USER=test@mail.com           # Email user name for sending authorization keys
+EMAIL_HOST_PASSWORD=pass                # Email password for sending authorization keys
+EMAIL_USE_TLS=TRUE                      # Does the mailbox use TLS protocol
+CONSOLE_EMAIL=TRUE                      # Show verification codes in console, for development purposes
 
-    mkvirtualenv -p /usr/bin/python3 parkkihubi
+DB_USER_MIGRATION=postgres              # Postgres superuser name
+DB_MIGRATION_PASSWORD=parkkihubi        # Postgres superuser password
+DB_USER_RUNTIME=pgs                     # Postgres user name
+DB_RUNTIME_PASSWORD=parkkihubi          # Postgres user passowrd
+DB_NAME=pgs                             # Postgres database name
+DB_HOST=db                              # Postgres database host name
+DB_SERVICE_PORT=5432                    # On which port database will be availabe
 
-The virtualenv will automatically activate. To activate it in the future, just do:
+PARKING_AREAS_ADDRESS=url_address       # URL to GeoJSON file with parking areas, can be omitted when using local file
+PARKING_AREAS_PATH=parkings/fixtures/parking_areas.geojson  # Path to parking areas GeoJSON file, when PARKING_AREAS_ADDRESS is set, on this path will be stored downloaded file
+PAYMENT_ZONES_ADDRESS=url_address       # URL to GeoJSON file with payment zones, can be omitted when using local file
+PAYMENT_ZONES_PATH=parkings/fixtures/payment_zones.geojson  # Path to payment zones GeoJSON file, when PAYMENT_ZONES_ADDRESS is set, on this path will be stored downloaded file
+REGIONS_ADDRESS=url_address             # URL to GeoJSON file with regions, can be omitted when using local file
+REGIONS_PATH=parkings/fixtures/regions.geojson    # Path to regions GeoJSON file, when REGIONS_ADDRESS is set, on this path will be stored downloaded file
+TERMINALS_ADDRESS=url_address           # URL or path to JSON file with parking terminals
+TERMINALS_LOCAL=FALSE                   # Is TERMINALS_ADDRESS is a URL or path
+DEFAULT_ENFORCEMENT_DOMAIN=Helsinki     # Default enforcement domain
+DEFAULT_ENFORCEMENT_DOMAIN_ABBREVIATION=HEL # Abbrevation of default enforcement domain
 
-    workon parkkihubi
+REACT_APP_API_URL=url_address           # Address on which web application is availabe
+REACT_APP_SERVICE_PORT=80               # On which port dashboard will be availabe
+REACT_APP_API_CENTER="60.17,24.94"      # Coordinates of map center in dashboard
+```
 
-### Python requirements
+#### Geospatial data
 
-Use `pip-tools` to install and maintain installed dependencies.
+Below are shown how geospatial data should be formated.
 
-    pip install -U pip  # pip-tools needs pip==6.1 or higher (!)
-    pip install pip-tools
+##### Parking areas
 
-Install requirements as follows
+```json
+{
+  "type": "FeatureCollection",
+  "name": "parking_areas",
+  "features": [
+  {
+    "type": "Feature",
+    "properties": {
+      "origin_id": INT
+    },
+    "geometry": {
+      "type": "MultiPolygon",
+      "coordinates": [ [ [ [ Longitude, Latitude ], ... ] ] ]
+    }
+  }, ...
+  ],
+}
+```
 
-    pip-sync requirements.txt requirements-dev.txt
+##### Payment zones
 
-### Django configuration
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[[ Longitude, Latitude ], ... ] ] ]
+      },
+      "properties": {
+        "name": "STRING",
+        "number": INT
+      }
+    }, ...
+  ]
+}
+```
 
-Environment variables are used to customize configuration in `parkkihubi/settings.py`. If you wish to override any settings, you can place them in a local `.env` file which will automatically be sourced when Django imports the settings file.
+##### Regions
 
-Create a basic file for development as follows
+```json
+{
+  "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "STRING"
+        },
+        "geometry": {
+          "type": "MultiPolygon",
+          "coordinates": [ [ [ [ Longitude, Latitude ], ... ] ] ]
+        }
+      }, ...
+    ]
+}
+```
 
-    echo 'DEBUG=True' > .env
+##### Parking terminals
 
-#### Parkkihubi settings
-
-- `PARKKIHUBI_PUBLIC_API_ENABLED` default `True`
-- `PARKKIHUBI_MONITORING_API_ENABLED` default `True`
-- `PARKKIHUBI_OPERATOR_API_ENABLED` default `True`
-- `PARKKIHUBI_ENFORCEMENT_API_ENABLED` default `True`
-
-### Database
-
-Create user and database
-
-    sudo -u postgres createuser -P -R -S parkkihubi  # use password `parkkihubi`
-    sudo -u postgres createdb -O parkkihubi parkkihubi
-    sudo -u postgres psql parkkihubi -c "CREATE EXTENSION postgis;"
-
-Allow user to create test database
-
-    sudo -u postgres psql -c "ALTER USER parkkihubi CREATEDB;"
-
-Tests also require that PostGIS extension is installed on the test database. This can be achieved most easily by adding PostGIS extension to the default template:
-
-    sudo -u postgres psql -d template1 -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-
-Run migrations
-
-    python manage.py migrate
-
-### Updating requirements files
-
-Use Prequ to update the `requirements*.txt` files.
-
-    pip install prequ
-
-When you change requirements, set them in `requirements.in` or `requirements-dev.in`. Then run:
-
-    prequ update
-
-### Running tests
-
-Run all tests
-
-    py.test
-
-Run with coverage
-
-    py.test --cov-report html --cov .
-
-Open `htmlcov/index.html` for the coverage report.
-
-### Importing parking areas
-
-To import Helsinki parking areas run:
-
-    python manage.py import_parking_areas
-
-### Starting a development server
-
-    python manage.py runserver
-
-Operator API will be available at [http://127.0.0.1:8000/operator/v1/](http://127.0.0.1:8000/operator/v1/)
-
-Enforcement API will be available at
-http://127.0.0.1:8000/enforcement/v1/
-
-Public API will be available at [http://127.0.0.1:8000/public/v1/](http://127.0.0.1:8000/public/v1/)
+```json
+[
+  {
+    "model": "parkings.parkingterminal",
+    "pk": UUID,
+    "fields": {
+      "created_at": "2019-01-01T00:00:00.000Z",
+      "modified_at": "2019-01-01T00:00:00.000Z",
+      "number": INT,
+      "name": "STRING",
+      "location": "POINT(Longitude, Latitude)"
+    }
+  }, ...
+]
+```
 
 ### Generating API documentation
 
@@ -154,23 +185,23 @@ Three possible ways (out of many) to generate the documentation:
 
     Due to [a bug in swagger-codegen](https://github.com/swagger-api/swagger-codegen/pull/4508),
     we're using an unreleased version at the moment.
-    
+
     To build swagger-codegen from source, you need Apache maven installed (you'll
     need java 7 runtime at a minimum):
-    
+
         # Ubuntu
         sudo apt-get install maven
-    
+
     Clone swagger-codegen master branch and build it:
-    
+
         git clone https://github.com/swagger-api/swagger-codegen
         cd swagger-codegen/
         mvn clean package  # Takes a few minutes
-    
+
     The client will now be available at `modules/swagger-codegen-cli/target/swagger-codegen-cli.jar`.
-    
+
     To build the docs, in `parkkihubi` repository root:
-    
+
         cd docs/api
         java -jar /path/to/codegen/swagger-codegen-cli.jar generate \
           -i enforcement.yaml -l html2 -c config.json \
@@ -179,6 +210,10 @@ Three possible ways (out of many) to generate the documentation:
           -i operator.yaml -l html2 -c config.json \
           -o /output/path/operator/
 
-## License
+### Acknowledgement
 
-[MIT](https://tldrlegal.com/license/mit-license)
+In the framework of project “PARKING GETS SMART – improved & digitalised parking management as a tool to foster green and multimodal transport in the South Baltic Area” co-financed from European Regional Development Fund
+
+![Alt text](logo.jpg)
+
+Disclaimer: the contents of this code are the sole responsibility of the authors and can in no way be taken to reflect the views of the European Union, the Managing Authority or the Joint Secretariat of the South Baltic Cross-border cooperation programme 2014-2020

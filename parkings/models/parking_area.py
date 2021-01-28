@@ -88,7 +88,7 @@ class ParkingArea(TimestampedModelMixin, UUIDPrimaryKeyMixin):
     # those would probably increase complexity.
     geom = models.MultiPolygonField(
         verbose_name=_('geometry'),
-        srid=3879,
+        srid=4326,
     )
 
     # This is a rough capacity estimate of how many cars might fit into the

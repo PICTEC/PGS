@@ -17,3 +17,9 @@
 .dashboard .parking-histogram {
     height: 40vh;
 }
+.dashboard .img-center {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -2,13 +2,13 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers, viewsets
 
-from ...models import PermitArea, PermitLookupItem
-from ...pagination import CursorPagination
+from parkings.models import PermitArea
+
+from ...models import PermitLookupItem
 from .permissions import IsEnforcer
 
 
 class ValidPermitItemSerializer(serializers.ModelSerializer):
-    permit_id = serializers.IntegerField(source='permit.id')
     area = serializers.SlugRelatedField(slug_field='identifier', queryset=PermitArea.objects.all())
     operator = serializers.CharField(source='permit.series.owner.operator.id')
     operator_name = serializers.CharField(source='permit.series.owner.operator.name')
@@ -16,8 +16,6 @@ class ValidPermitItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = PermitLookupItem
         fields = [
-            'id',
-            'permit_id',
             'area',
             'registration_number',
             'start_time',
@@ -37,6 +35,13 @@ class ValidPermitItemFilter(django_filters.rest_framework.FilterSet):
         model = PermitLookupItem
         fields = []
 
+    def is_valid(self):
+        super(ValidPermitItemFilter, self).is_valid()
+        if not self.request.query_params.get("reg_num") and not self.request.query_params.get("time"):
+            raise serializers.ValidationError(_("Either time or registration number required."))
+        else:
+            return True
+
     def filter_reg_num(self, queryset, name, value):
         return queryset.by_subject(value)
 
@@ -46,11 +51,9 @@ class ValidPermitItemFilter(django_filters.rest_framework.FilterSet):
 
 class ValidPermitItemViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsEnforcer]
-    queryset = PermitLookupItem.objects.active()
+    queryset = PermitLookupItem.objects.active().order_by('end_time')
     serializer_class = ValidPermitItemSerializer
     filterset_class = ValidPermitItemFilter
-    pagination_class = CursorPagination
 
     def get_queryset(self):
-        domain = self.request.user.enforcer.enforced_domain
-        return super().get_queryset().filter(permit__domain=domain)
+        return super().get_queryset().filter(permit__domain=self.request.user.enforcer.enforced_domain)

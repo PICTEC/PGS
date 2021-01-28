@@ -129,7 +129,6 @@ class PermitLookupItemAdmin(ReadOnlyAdmin):
         'permit__domain',
         'permit__series__owner']
     ordering = ('-permit__series', 'permit')
-    search_fields = ['registration_number']
 
     def series(self, instance):
         series = instance.permit.series

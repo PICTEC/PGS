@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(
                     blank=True, max_length=200, verbose_name='name')),
                 ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(
-                    srid=3879, verbose_name='geometry')),
+                    srid=4326, verbose_name='geometry')),
             ],
             options={
                 'verbose_name_plural': 'regions',

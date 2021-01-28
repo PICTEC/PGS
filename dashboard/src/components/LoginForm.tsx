@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { Alert, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
+
 export interface Props {
     phase?: 'login' | 'verification-code';
     loginErrorMessage?: string;
@@ -50,13 +60,13 @@ export default class LoginForm extends React.Component<Props, State> {
                 {(this.props.phase === 'login') ? (<>
                     <Field
                         name="username"
-                        text="Käyttäjätunnus"
+                        text={lang.username}
                         value={this.state.username}
                         onChange={this.handleChange}
                     />
                     <Field
                         name="password"
-                        text="Salasana"
+                        text={lang.password}
                         value={this.state.password}
                         onChange={this.handleChange}
                     />
@@ -66,7 +76,7 @@ export default class LoginForm extends React.Component<Props, State> {
                 </>) : (<>
                     <Field
                         name="verificationCode"
-                        text="Varmennuskoodi"
+                        text={lang.verificationCode}
                         value={this.state.verificationCode}
                         onChange={this.handleChange}
                     />
@@ -80,9 +90,9 @@ export default class LoginForm extends React.Component<Props, State> {
                     color="primary"
                 >
                     {(this.props.phase === 'login') ? (<>
-                        <i className="fa fa-step-forward"/>{' '}Seuraava
+                        <i className="fa fa-step-forward"/>{' '}{lang.next}
                     </>) : (<>
-                        <i className="fa fa-sign-in"/>{' '}Kirjaudu
+                        <i className="fa fa-sign-in"/>{' '}{lang.logIn}
                     </>)}
                 </Button>
             </Form>);

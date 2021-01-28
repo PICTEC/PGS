@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('parkings', '0035_parkings_payment_zone_fk_change'),
+        ('parkings', '0034_permitlookupitem_area'),
     ]
 
     operations = [

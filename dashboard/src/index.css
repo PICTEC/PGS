@@ -3,3 +3,33 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.siteFooterBar {
+  position: fixed;
+  bottom: 0;
+  padding-top: 10px;
+  width: 100%;
+  box-shadow: 0px 0px 25px rgb(207, 207, 207);
+  height: 85px;
+  color: #9B9B9B;
+  background: #F3F3F3;
+}
+
+.content {
+  display: block;
+  padding: 10px;
+  margin: 0px auto;
+  text-align: center;
+  font: 25px Georgia, "Times New Roman", Times, serif;
+  font-size: 14px;
+  width:500px;
+}
+.foot {
+  display:inline;
+  line-height: 77px;
+}
+.content img {
+  height: 77px;
+  width: 379px;
+  float:left;
+}

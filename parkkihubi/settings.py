@@ -5,6 +5,8 @@ from environ import Env
 from raven import fetch_git_sha
 from raven.exceptions import InvalidGitRepository
 
+from ast import literal_eval
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 assert os.path.isfile(os.path.join(BASE_DIR, 'manage.py'))
 
@@ -17,11 +19,11 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 ########################
 # Django core settings #
 ########################
-DEBUG = env.bool('DEBUG', default=False)
+DEBUG = env.bool('DEBUG', default=True)
 TIER = env.str('TIER', default='dev')
 SECRET_KEY = env.str('SECRET_KEY', default=('' if not DEBUG else 'xxx'))
-ALLOWED_HOSTS = ['*']
 
+ALLOWED_HOSTS = literal_eval(env.str('ALLOWED_HOSTS', default="['*']"))
 #########
 # Paths #
 #########
@@ -40,21 +42,24 @@ MEDIA_URL = '/media/'
 ROOT_URLCONF = 'parkkihubi.urls'
 STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
 STATIC_URL = '/static/'
-
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static'),
+#     )
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ############
 # Database #
 ############
-if os.environ.get('CI'):
-    default_database_url = 'postgis://postgres:@localhost/parkkihubi'
-else:
-    default_database_url = 'postgis://parkkihubi:parkkihubi@localhost/parkkihubi'
 
 DATABASES = {
-    'default': env.db_url(
-        default=default_database_url
-    )
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': env.str('DB_NAME'),
+        'USER': env.str('DB_USER_RUNTIME'),
+        'PASSWORD': env.str('DB_RUNTIME_PASSWORD'),
+        'HOST': env.str('DB_HOST'),
+        'PORT': env.int('DB_SERVICE_PORT')
+    }
 }
-
 ##########
 # Caches #
 ##########
@@ -136,9 +141,9 @@ RAVEN_CONFIG = {
 ############################
 # Languages & Localization #
 ############################
-LANGUAGE_CODE = 'en'
-TIME_ZONE = 'UTC'
-ADMIN_TIME_ZONE = 'Europe/Helsinki'
+LANGUAGE_CODE = env.str('LANGUAGE_CODE', default='en')
+TIME_ZONE = env.str('TIME_ZONE', default='UTC')
+ADMIN_TIME_ZONE = env.str('ADMIN_TIME_ZONE', default='Europe/Helsinki')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -151,10 +156,15 @@ WSGI_APPLICATION = 'parkkihubi.wsgi.application'
 ##########
 # Mailer #
 ##########
-vars().update(env.email_url(
-    default=('consolemail://' if DEBUG else 'smtp://localhost:25')
-))
-DEFAULT_FROM_EMAIL = 'no-reply.parkkihubi@fiupparkp01.anders.fi'
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default=None)
+EMAIL_PORT = env.int('EMAIL_PORT', default=None)
+if env.bool('CONSOLE_EMAIL', default=False) == True:
+    EMAIL_HOST = 'localhost'
+else:
+    EMAIL_HOST = env.str('EMAIL_HOST', default=None)
+    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default=None)
+    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default=None)
+    EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 
 #########################
 # Django REST Framework #
@@ -190,13 +200,11 @@ JWT_AUTH = {
 JWT2FA_AUTH = {
     'CODE_TOKEN_THROTTLE_RATE': '5/15m',
     'AUTH_TOKEN_RETRY_WAIT_TIME': timedelta(seconds=10),
-    'EMAIL_SENDER_SUBJECT_OVERRIDE': '{code} - Varmennuskoodisi',
+    'EMAIL_SENDER_SUBJECT_OVERRIDE': '{code} - PGS - verification code',
     'EMAIL_SENDER_BODY_OVERRIDE': (
-        'Hei!\n'
+        'Hi!\n'
         '\n'
-        'Varmennuskoodisi kirjautumista varten on: {code}\n'
-        '\n'
-        't. Parkkihubi'),
+        'Your verification code for login is: {code}\n'),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -215,4 +223,6 @@ PARKKIHUBI_OPERATOR_API_ENABLED = env.bool('PARKKIHUBI_OPERATOR_API_ENABLED', Tr
 PARKKIHUBI_ENFORCEMENT_API_ENABLED = (
     env.bool('PARKKIHUBI_ENFORCEMENT_API_ENABLED', True))
 PARKKIHUBI_PERMITS_PRUNABLE_AFTER = timedelta(days=3)
-DEFAULT_ENFORCEMENT_DOMAIN = ('Helsinki', 'HKI')
+
+DEFAULT_ENFORCEMENT_DOMAIN = (env.str('DEFAULT_ENFORCEMENT_DOMAIN', default='Helsinki'),
+                              env.str('DEFAULT_ENFORCEMENT_DOMAIN_ABBREVIATION', default='HKI'))

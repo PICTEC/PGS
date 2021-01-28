@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='parkingarea',
             name='geom',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=3879, verbose_name='geometry'),
+            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326, verbose_name='geometry'),
         ),
         migrations.AlterField(
             model_name='parkingarea',

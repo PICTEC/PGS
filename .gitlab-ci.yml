@@ -1,0 +1,49 @@
+test:
+  stage: test
+  image: python:3.7
+  script:
+    - apt-get update && apt-get install -y libpq-dev postgresql postgis binutils libproj-dev gdal-bin
+    - pip install --no-cache-dir -r requirements-test.txt
+    - pip install --no-cache-dir -r requirements.txt
+    - py.test
+  allow_failure: true # TODO remove after fixing tests or job
+
+build_docker_master:
+  stage: deploy
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    WEB_IMAGE_TAG_LATEST: "$CI_REGISTRY_IMAGE:WEB_latest"
+    WEB_IMAGE_TAG_COMMIT_SHA: "$CI_REGISTRY_IMAGE:WEB_1.0.$CI_JOB_ID"
+    DASHBOARD_IMAGE_TAG_LATEST: "$CI_REGISTRY_IMAGE:DASHBOARD_latest"
+    DASHBOARD_IMAGE_TAG_COMMIT_SHA: "$CI_REGISTRY_IMAGE:DASHBOARD_1.0.$CI_JOB_ID"
+  only:
+    - master
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t "$WEB_IMAGE_TAG_COMMIT_SHA" -t "$WEB_IMAGE_TAG_LATEST" .
+    - docker build -t "$DASHBOARD_IMAGE_TAG_COMMIT_SHA" -t "$DASHBOARD_IMAGE_TAG_LATEST" ./dashboard/
+    - docker push "$WEB_IMAGE_TAG_COMMIT_SHA"
+    - docker push "$WEB_IMAGE_TAG_LATEST"
+    - docker push "$DASHBOARD_IMAGE_TAG_COMMIT_SHA"
+    - docker push "$DASHBOARD_IMAGE_TAG_LATEST"
+
+build_docker_branch:
+  stage: deploy
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    WEB_IMAGE_TAG: "$CI_REGISTRY_IMAGE:WEB_$CI_COMMIT_REF_NAME"
+    DASHBOARD_IMAGE_TAG: "$CI_REGISTRY_IMAGE:DASHBOARD_$CI_COMMIT_REF_NAME"
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t "$WEB_IMAGE_TAG" .
+    - docker build -t "$DASHBOARD_IMAGE_TAG" .
+    - docker push "$WEB_IMAGE_TAG"
+    - docker push "$DASHBOARD_IMAGE_TAG"
+  except:
+    - master

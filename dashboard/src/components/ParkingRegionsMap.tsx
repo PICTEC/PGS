@@ -8,6 +8,16 @@ import { MapViewport, Point, Region, RegionProperties } from './types';
 
 import './ParkingRegionsMap.css';
 
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
+
 // Add viewport props to the allowed props for Map component, since
 // they are missing from the latest libdefs available.
 // See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/22125
@@ -84,20 +94,20 @@ export default class ParkingRegionsMap extends React.Component<Props> {
         layer.bindTooltip(props.name);
         const text = `
             <h3>${props.name}</h3>
-            <b>Pinta-ala</b>:
+            <b>${lang.surface}</b>:
               ${props.areaKm2.toFixed(2)} km<sup>2</sup><br>
-            <b>Arvioitu kapasiteetti</b>:
+            <b>${lang.capacityEstimate}</b>:
               ${props.capacityEstimate}<br>
-            <b>Arvioitu kapasiteetti (pinta-ala)</b>:
+            <b>${lang.capacityEstimateFromArea}</b>:
               ${capacityEstimateFromArea}<br>
-            <b>Paikkoja per km<sup>2</sup></b>:
+            <b>${lang.spotsPerKm2}</b>:
               ${props.spotsPerKm2.toFixed(2)}<br>
             <hr>
-            <b>Pysäköintejä</b>:
+            <b>${lang.parkingCount}</b>:
               ${props.parkingCount || 0}<br>
-            <b>Pysäköintejä per km<sup>2</sup></b>:
+            <b>${lang.parkingsPerKm2}</b>:
               ${parkingsPerKm2.toFixed(2)}<br>
-            <b>Käyttöaste</b>:
+            <b>${lang.usagePercentage}</b>:
               ${usagePercentage.toFixed(2)}&nbsp;%<br>
             `;
         layer.bindPopup(text);

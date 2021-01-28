@@ -1,5 +1,6 @@
 import abc
 import json
+import requests
 
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon
 
@@ -11,7 +12,10 @@ class GeoJsonImporter(metaclass=abc.ABCMeta):
         self.srid = srid
         self.default_domain_code = default_domain_code
 
-    def read_and_parse(self, geojson_file_path):
+    def read_and_parse(self, geojson_file_path, geojson_file_url=None):
+        if geojson_file_url is not None:
+            r = requests.get(geojson_file_url, allow_redirects=True)
+            open(geojson_file_path, 'wb+').write(r.content)
         with open(geojson_file_path, "rt") as file:
             root = json.load(file)
             for member in root['features']:

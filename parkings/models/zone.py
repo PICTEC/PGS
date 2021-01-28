@@ -15,7 +15,7 @@ class PaymentZone(TimestampedModelMixin):
     number = models.IntegerField(verbose_name=_('zone number'))
     name = models.CharField(max_length=40, verbose_name=_('name'))
     geom = gis_models.MultiPolygonField(
-        srid=GK25FIN_SRID, verbose_name=_('geometry'))
+        srid=4326, verbose_name=_('geometry'))
 
     class Meta:
         unique_together = [('domain', 'code')]

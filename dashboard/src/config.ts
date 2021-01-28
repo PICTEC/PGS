@@ -1,15 +1,22 @@
 import { Point } from './components/types';
 
-export const isDev: boolean = (process.env.NODE_ENV === 'development');
+declare global {
+  interface Window {
+    _env_: {
+      REACT_APP_API_CENTER: string;
+      REACT_APP_API_URL: string;
+    };
+  }
+}
 
-export const apiBaseUrl: string = process.env.REACT_APP_API_URL || (
-    (isDev)
-        ? 'http://localhost:8000/'
-        : 'https://api.parkkiopas.fi/');
+export const isDev = false;
+
+export const apiBaseUrl: string = window._env_.REACT_APP_API_URL;
 
 let mapPoint: Point;
-if (typeof process.env.REACT_APP_API_CENTER !== 'undefined') {
-    const envPoint = process.env.REACT_APP_API_CENTER!.split(',').map(Number);
+
+if (typeof window._env_.REACT_APP_API_CENTER !== 'undefined') {
+    const envPoint = window._env_.REACT_APP_API_CENTER!.split(',').map(Number);
     mapPoint = [envPoint[0], envPoint[1]];
 } else {
     mapPoint = [60.17, 24.94]; // Default to Helsinki centrum

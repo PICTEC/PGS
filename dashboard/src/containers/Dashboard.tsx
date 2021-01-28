@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Bar } from 'react-chartjs-2';
 import {
     Button, Card, CardHeader, CardBody,
-    Container, Row, Col } from 'reactstrap';
+    Container, Row, Col, CardGroup } from 'reactstrap';
 
 import * as dispatchers from '../dispatchers';
 import { RootState } from '../types';
@@ -15,6 +15,18 @@ import TimeSelect from './TimeSelect';
 import RegionSelector from  './RegionSelector';
 
 import './Dashboard.css';
+
+var logo = require('./../assets/pgs_logo.png');
+
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
 
 const bar = {
     labels: ['16', '18', '20', '22', '0', '2', '4', '6', '8', '10', '12', '14'],
@@ -92,7 +104,7 @@ class Dashboard extends React.Component<Props> {
                                 </CardBody>
                             </Card>
                             <Card className="parking-histogram">
-                                <CardHeader>Pysäköintimäärät, viimeiset 24 t</CardHeader>
+                                <CardHeader>{lang.parkingVolumes24H}</CardHeader>
                                 <CardBody>
                                     <Bar
                                         data={bar}
@@ -122,7 +134,7 @@ class Dashboard extends React.Component<Props> {
                         <Col>
                             <Card>
                                 <CardHeader>
-                                    Aktiiviset pysäköinnit
+                                    {lang.activeParkings}
                                 </CardHeader>
                                 <CardBody>
                                     <LastParkingsTable/>
@@ -136,8 +148,19 @@ class Dashboard extends React.Component<Props> {
                                 onClick={this.props.onLogout}
                                 color="danger"
                             >
-                                <i className="fa fa-sign-out"/>{' '}Kirjaudu ulos
+                                <i className="fa fa-sign-out"/>{' '}{lang.signOut}
                             </Button>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <CardGroup>
+                                <Card>
+                                    <CardBody className="img-center">
+                                        <img src={logo} alt="Logo" width="800px" height="104px" />
+                                    </CardBody>
+                                </Card>
+                            </CardGroup>
                         </Col>
                     </Row>
                 </Container>

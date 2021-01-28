@@ -3,6 +3,16 @@ import Select from 'react-select';
 
 import './RegionSelector.css';
 
+let langFile = require('../languages/en-EN.json');
+var language = window.navigator.language;
+try {
+  langFile = require('../languages/'.concat(language, '.json'));
+} catch {
+  langFile = require('../languages/en-EN.json');
+}
+let stringData = JSON.stringify(langFile);
+let lang = JSON.parse(stringData);
+
 type RegionId = string;
 type RegionTuple = [RegionId, string];  // id, name
 
@@ -31,7 +41,7 @@ export default class RegionSelector extends React.Component<Props> {
                 value={this.props.selectedRegion}
                 options={options}
                 onChange={this.handleItemChange}
-                placeholder="Valitse alue..."
+                placeholder={lang.selectRegion}
             />);
     }
 

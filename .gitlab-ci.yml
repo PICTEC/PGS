@@ -1,49 +1,49 @@
-test:
-  stage: test
-  image: python:3.7
+stages:
+  - build
+  - deploy
+
+buid_artefact:
+  image: python:3.7.6
+  stage: build
   script:
-    - apt-get update && apt-get install -y libpq-dev postgresql postgis binutils libproj-dev gdal-bin
-    - pip install --no-cache-dir -r requirements-test.txt
-    - pip install --no-cache-dir -r requirements.txt
-    - py.test
-  allow_failure: true # TODO remove after fixing tests or job
+    - python setup.py bdist_wheel
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
 
 build_docker_master:
+  image: docker:$DOCKER_VERSION
   stage: deploy
-  image: docker:19.03.1
   services:
-    - docker:19.03.1-dind
+    - docker:$DOCKER_DIND_VERSION
   variables:
-    DOCKER_TLS_CERTDIR: "/certs"
-    WEB_IMAGE_TAG_LATEST: "$CI_REGISTRY_IMAGE:WEB_latest"
-    WEB_IMAGE_TAG_COMMIT_SHA: "$CI_REGISTRY_IMAGE:WEB_1.0.$CI_JOB_ID"
-    DASHBOARD_IMAGE_TAG_LATEST: "$CI_REGISTRY_IMAGE:DASHBOARD_latest"
-    DASHBOARD_IMAGE_TAG_COMMIT_SHA: "$CI_REGISTRY_IMAGE:DASHBOARD_1.0.$CI_JOB_ID"
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - IMAGE_TAG_LATEST="$CI_REGISTRY_IMAGE:latest"
+    - IMAGE_TAG_COMMIT_SHA="$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
+    - docker build -t "$IMAGE_TAG_COMMIT_SHA" -t "$IMAGE_TAG_LATEST" .
+    - docker push "$IMAGE_TAG_COMMIT_SHA"
+    - docker push "$IMAGE_TAG_LATEST"
   only:
     - master
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t "$WEB_IMAGE_TAG_COMMIT_SHA" -t "$WEB_IMAGE_TAG_LATEST" .
-    - docker build -t "$DASHBOARD_IMAGE_TAG_COMMIT_SHA" -t "$DASHBOARD_IMAGE_TAG_LATEST" ./dashboard/
-    - docker push "$WEB_IMAGE_TAG_COMMIT_SHA"
-    - docker push "$WEB_IMAGE_TAG_LATEST"
-    - docker push "$DASHBOARD_IMAGE_TAG_COMMIT_SHA"
-    - docker push "$DASHBOARD_IMAGE_TAG_LATEST"
 
 build_docker_branch:
+  image: docker:$DOCKER_VERSION
   stage: deploy
-  image: docker:19.03.1
   services:
-    - docker:19.03.1-dind
+    - docker:$DOCKER_DIND_VERSION
   variables:
-    DOCKER_TLS_CERTDIR: "/certs"
-    WEB_IMAGE_TAG: "$CI_REGISTRY_IMAGE:WEB_$CI_COMMIT_REF_NAME"
-    DASHBOARD_IMAGE_TAG: "$CI_REGISTRY_IMAGE:DASHBOARD_$CI_COMMIT_REF_NAME"
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t "$WEB_IMAGE_TAG" .
-    - docker build -t "$DASHBOARD_IMAGE_TAG" .
-    - docker push "$WEB_IMAGE_TAG"
-    - docker push "$DASHBOARD_IMAGE_TAG"
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - IMAGE_TAG="$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - docker build -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
   except:
     - master

@@ -19,3 +19,5 @@ COPY . .
 RUN ["chmod", "+x", "waitAndRun.sh"]
 
 CMD []
+
+ENTRYPOINT ["bash", "waitAndRun.sh"]

@@ -19,6 +19,17 @@ docker-compose up
 ```
 this will run three docker containers based on your environment variables.
 
+Sample user:
+```
+Login: admin
+Password: pass
+```
+
+If you don't want to add all variables to your environment, then create `.env` file with all the properties below and then run docker with the following command:
+```
+docker-compose --env-file .env up
+```
+
 #### Environment variables
 
 There is a list of environment variables used during running docker images.
@@ -53,20 +64,20 @@ DB_NAME=pgs                             # Postgres database name
 DB_HOST=db                              # Postgres database host name
 DB_SERVICE_PORT=5432                    # On which port database will be availabe
 
-PARKING_AREAS_ADDRESS=url_address       # URL to GeoJSON file with parking areas, can be omitted when using local file
-PARKING_AREAS_PATH=parkings/fixtures/parking_areas.geojson  # Path to parking areas GeoJSON file, when PARKING_AREAS_ADDRESS is set, on this path will be stored downloaded file
-PAYMENT_ZONES_ADDRESS=url_address       # URL to GeoJSON file with payment zones, can be omitted when using local file
-PAYMENT_ZONES_PATH=parkings/fixtures/payment_zones.geojson  # Path to payment zones GeoJSON file, when PAYMENT_ZONES_ADDRESS is set, on this path will be stored downloaded file
-REGIONS_ADDRESS=url_address             # URL to GeoJSON file with regions, can be omitted when using local file
+#PARKING_AREAS_ADDRESS=                 # URL to GeoJSON file with parking areas, can be omitted when using local file
+PARKING_AREAS_PATH=./data/Vaxjo/parking_areas.geojson  # Path to parking areas GeoJSON file, when PARKING_AREAS_ADDRESS is set, on this path will be stored downloaded file
+#PAYMENT_ZONES_ADDRESS=                 # URL to GeoJSON file with payment zones, can be omitted when using local file
+PAYMENT_ZONES_PATH=./data/Vaxjo/payment_zones.geojson  # Path to payment zones GeoJSON file, when PAYMENT_ZONES_ADDRESS is set, on this path will be stored downloaded file
+#REGIONS_ADDRESS=                       # URL to GeoJSON file with regions, can be omitted when using local file
 REGIONS_PATH=parkings/fixtures/regions.geojson    # Path to regions GeoJSON file, when REGIONS_ADDRESS is set, on this path will be stored downloaded file
-TERMINALS_ADDRESS=url_address           # URL or path to JSON file with parking terminals
-TERMINALS_LOCAL=FALSE                   # Is TERMINALS_ADDRESS is a URL or path
+TERMINALS_ADDRESS=./data/Vaxjo/parking_terminals.json            # URL or path to JSON file with parking terminals
+TERMINALS_LOCAL=TRUE                    # Is TERMINALS_ADDRESS is a URL or path
 DEFAULT_ENFORCEMENT_DOMAIN=Helsinki     # Default enforcement domain
 DEFAULT_ENFORCEMENT_DOMAIN_ABBREVIATION=HEL # Abbrevation of default enforcement domain
 
-REACT_APP_API_URL=url_address           # Address on which web application is availabe
-REACT_APP_SERVICE_PORT=80               # On which port dashboard will be availabe
-REACT_APP_API_CENTER="60.17,24.94"      # Coordinates of map center in dashboard
+REACT_APP_API_URL=http://localhost:8000/    # Address on which web application is availabe
+REACT_APP_SERVICE_PORT=80                   # On which port dashboard will be availabe
+REACT_APP_API_CENTER="60.17,24.94"          # Coordinates of map center in dashboard
 ```
 
 #### Geospatial data

@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('geojson_file_path')
-        parser.add_argument('geojson_file_url', type=str, default=None)
+        parser.add_argument('--geojson_file_url', type=str, default=None)
         parser.add_argument('--srid', '-s', type=int, default=None)
         parser.add_argument('--domain', '-d', type=str, default=None)
 

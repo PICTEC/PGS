@@ -34,12 +34,12 @@ nohup python manage.py create_init_user $DJANGO_SUPERUSER_USERNAME $DJANGO_SUPER
 nohup python manage.py import_geojson_parking_areas $PARKING_AREAS_PATH $PARKING_AREAS_ADDRESS
 >&2 echo "Importing payment zones"
 nohup python manage.py import_geojson_payment_zones $PAYMENT_ZONES_PATH $PAYMENT_ZONES_ADDRESS
->&2 echo "Import regions"
-nohup python manage.py import_geojson_regions $REGIONS_PATH $REGIONS_ADDRESS
->&2 echo "Import parking terminals"
-nohup python manage.py import_parking_terminals $TERMINALS_ADDRESS $TERMINALS_LOCAL
->&2 echo "Fill parking regions"
-nohup python manage.py fill_parking_regions
+#>&2 echo "Import regions"
+#nohup python manage.py import_geojson_regions $REGIONS_PATH $REGIONS_ADDRESS
+#>&2 echo "Import parking terminals"
+#nohup python manage.py import_parking_terminals $TERMINALS_ADDRESS $TERMINALS_LOCAL
+#>&2 echo "Fill parking regions"
+#nohup python manage.py fill_parking_regions
 
 if [ "$CONSOLE_EMAIL" = TRUE ] ; then
   >&2 echo "Starting SMTP debugging server"

@@ -18,6 +18,4 @@ COPY . .
 
 RUN ["chmod", "+x", "run_app.sh"]
 
-CMD []
-
-ENTRYPOINT ["bash", "run_app.sh"]
+CMD ["run_app.sh"]

@@ -16,8 +16,8 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 
-RUN ["chmod", "+x", "waitAndRun.sh"]
+RUN ["chmod", "+x", "run_app.sh"]
 
 CMD []
 
-ENTRYPOINT ["bash", "waitAndRun.sh"]
+ENTRYPOINT ["bash", "run_app.sh"]

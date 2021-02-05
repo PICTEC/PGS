@@ -15,6 +15,7 @@ services:
       - "5432:5432"
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
   web:
     links:
       - db
@@ -66,11 +67,11 @@ services:
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+    command: ["./run_app.sh"]
 
-    command: ["./waitAndRun.sh"]
   dashboard:
     build:
-      context: ./dashboard/
+      context: ./dashboard
     environment:
       - REACT_APP_API_CENTER=${REACT_APP_API_CENTER}
       - REACT_APP_API_URL=${REACT_APP_API_URL}

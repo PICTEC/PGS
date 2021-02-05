@@ -10,8 +10,6 @@ Session.vim
 *~
 # auto-generated tag files
 tags
-### Linux template
-*~
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -130,8 +128,6 @@ target/
 # celery beat schedule file
 celerybeat-schedule
 
-# dotenv
-.env
 
 # virtualenv
 .venv/

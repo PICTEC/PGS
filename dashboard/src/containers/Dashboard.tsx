@@ -1,18 +1,18 @@
-import { Dispatch } from 'redux';
+import {Dispatch} from 'redux';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { Bar } from 'react-chartjs-2';
-import {
-    Button, Card, CardHeader, CardBody,
-    Container, Row, Col, CardGroup } from 'reactstrap';
+import {Bar} from 'react-chartjs-2';
+import {Button, Card, CardBody, CardGroup, CardHeader, Col, Container, Row} from 'reactstrap';
 
 import * as dispatchers from '../dispatchers';
-import { RootState } from '../types';
+import {RootState, Timestamp} from '../types';
 import LastParkingsTable from './LastParkingsTable';
 import ParkingRegionsMap from './ParkingRegionsMap';
 import TimeSelect from './TimeSelect';
-import RegionSelector from  './RegionSelector';
+import RegionSelector from './RegionSelector';
+import fileDownload from 'js-file-download';
+import * as moment from 'moment';
 
 import './Dashboard.css';
 
@@ -21,9 +21,9 @@ var logo = require('./../assets/pgs_logo.png');
 let langFile = require('../languages/en-EN.json');
 var language = window.navigator.language;
 try {
-  langFile = require('../languages/'.concat(language, '.json'));
+    langFile = require('../languages/'.concat(language, '.json'));
 } catch {
-  langFile = require('../languages/en-EN.json');
+    langFile = require('../languages/en-EN.json');
 }
 let stringData = JSON.stringify(langFile);
 let lang = JSON.parse(stringData);
@@ -46,6 +46,7 @@ interface Props {
     autoUpdate: boolean;
     onUpdate: () => void;
     onLogout: (event: React.MouseEvent<{}>) => void;
+    dateTime: Timestamp | null;
 }
 
 type TimerId = number;
@@ -92,6 +93,12 @@ class Dashboard extends React.Component<Props> {
         }
     }
 
+    private handleStatisticsDownload() {
+        dispatchers.fetchStatistics((response) => fileDownload(response.data, "statistics.csv"),
+            (error) => console.error('Cannot fetch statistics: ' + error),
+            moment(this.props.dateTime));
+    }
+
     render() {
         return (
             <main className="main">
@@ -116,6 +123,7 @@ class Dashboard extends React.Component<Props> {
                                     />
                                 </CardBody>
                             </Card>
+                            <Button onClick={() => this.handleStatisticsDownload()} color="primary">{lang.downloadStatistics}</Button>
                         </Col>
                         <Col xl="5" lg="6" md="6" sm="12">
                             <Card>
@@ -157,7 +165,7 @@ class Dashboard extends React.Component<Props> {
                             <CardGroup>
                                 <Card>
                                     <CardBody className="img-center">
-                                        <img src={logo} alt="Logo" width="800px" height="104px" />
+                                        <img src={logo} alt="Logo" width="800px" height="104px"/>
                                     </CardBody>
                                 </Card>
                             </CardGroup>
@@ -172,6 +180,7 @@ class Dashboard extends React.Component<Props> {
 function mapStateToProps(state: RootState): Partial<Props> {
     return {
         autoUpdate: state.autoUpdate,
+        dateTime: state.dataTime
     };
 }
 

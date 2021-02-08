@@ -27,5 +27,6 @@
   "timeStart": "Czas rozpoczęcia",
   "timeEnd": "Czas zakończenia",
   "createdAt": "Utworzono",
-  "modifiedAt": "Zmodyfikowano"
+  "modifiedAt": "Zmodyfikowano",
+  "downloadStatistics": "Pobierz statystyki"
 }

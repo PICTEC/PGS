@@ -27,5 +27,6 @@
   "timeStart": "Time start",
   "timeEnd": "Time end",
   "createdAt": "Created at",
-  "modifiedAt": "Modified at"
+  "modifiedAt": "Modified at",
+  "downloadStatistics": "Download statistics"
 }

@@ -20,6 +20,7 @@ export class Api {
         regions: '/monitoring/v1/region/',
         regionStats: '/monitoring/v1/region_statistics/',
         validParkings: '/monitoring/v1/valid_parking/',
+        statistics: '/monitoring/v1/statistics/',
     };
 
     public auth: AuthManager;
@@ -60,6 +61,14 @@ export class Api {
         const timeParam = (time) ? '?time=' + time.toISOString() : '';
         this._fetchAllPages(this.endpoints.validParkings + timeParam,
                             callback, errorHandler);
+    }
+
+    fetchStatistics(time: Moment,
+       callback: SuccessCallback<ParkingList>,
+       errorHandler: ErrorHandler,
+    ): void {
+        const timeParam = (time) ? '?time=' + time.toISOString() : '';
+        this._fetchAllPages(`${this.endpoints.statistics}${timeParam}`, callback, errorHandler);
     }
 
     private _fetchAllPages(

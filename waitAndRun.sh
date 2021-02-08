@@ -47,5 +47,8 @@ if [ "$CONSOLE_EMAIL" = TRUE ] ; then
   nohup python -m smtpd -n -c DebuggingServer localhost:$EMAIL_PORT &
 fi
 
+>&2 echo "Copy static files"
+python manage.py collectstatic
+
 >&2 echo "Starting server"
 nohup python -u manage.py runserver 0.0.0.0:$SERVICE_PORT

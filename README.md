@@ -17,18 +17,16 @@ To run database, web application and dashboard you need to simply run command
 ```
 docker-compose up
 ```
-this will run three docker containers based on your environment variables.
+this will run three docker containers based on your environment variables. The application started this way will use
+database dump from the development cluster. For clean installation check branch `pgs-clean-install-branch`.
 
 Sample user:
 ```
-Login: admin
-Password: pass
+Login: mateusz
+Password: MKq4VZt6eRkUsFm
 ```
 
-If you don't want to add all variables to your environment, then create `.env` file with all the properties below and then run docker with the following command:
-```
-docker-compose --env-file .env up
-```
+For first production deployment please load database dump from this repository first. 
 
 #### Environment variables
 

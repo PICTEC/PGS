@@ -1,10 +1,10 @@
-import {Dispatch} from 'redux';
+import { Dispatch } from 'redux';
 import * as moment from 'moment';
 
 import * as actions from './actions';
 import api from './api';
-import {MapViewport} from './components/types';
-import {RootState} from './types';
+import { MapViewport } from './components/types';
+import { RootState } from './types';
 
 const updateInterval = 5 * 60 * 1000;  // 5 minutes in ms
 
@@ -162,8 +162,4 @@ export function fetchValidParkings(time: moment.Moment) {
                 alert('Valid parkings fetch failed: ' + error);
             });
     };
-}
-
-export function fetchStatistics(callback, errorHandler, time?) {
-    return api.fetchStatistics(time, callback, errorHandler);
 }

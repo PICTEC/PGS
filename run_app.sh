@@ -20,7 +20,7 @@ if [ "$CONSOLE_EMAIL" = TRUE ] ; then
 fi
 
 >&2 echo "Copy static files"
-python manage.py collectstatic
+python manage.py collectstatic --noinput
 
 >&2 echo "Starting server"
 nohup python -u manage.py runserver 0.0.0.0:$SERVICE_PORT

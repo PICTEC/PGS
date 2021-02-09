@@ -1,12 +1,12 @@
-import {Dispatch} from 'redux';
+import { Dispatch } from 'redux';
 import * as React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {Bar} from 'react-chartjs-2';
-import {Button, Card, CardBody, CardGroup, CardHeader, Col, Container, Row} from 'reactstrap';
+import { Bar } from 'react-chartjs-2';
+import { Button, Card, CardBody, CardGroup, CardHeader, Col, Container, Row } from 'reactstrap';
 
 import * as dispatchers from '../dispatchers';
-import {RootState, Timestamp} from '../types';
+import { RootState, Timestamp } from '../types';
 import LastParkingsTable from './LastParkingsTable';
 import ParkingRegionsMap from './ParkingRegionsMap';
 import TimeSelect from './TimeSelect';
@@ -15,6 +15,8 @@ import fileDownload from 'js-file-download';
 import * as moment from 'moment';
 
 import './Dashboard.css';
+import api from '../api';
+import * as axios from 'axios';
 
 var logo = require('./../assets/pgs_logo.png');
 
@@ -46,7 +48,7 @@ interface Props {
     autoUpdate: boolean;
     onUpdate: () => void;
     onLogout: (event: React.MouseEvent<{}>) => void;
-    dateTime: Timestamp | null;
+    dateTime: Timestamp|null;
 }
 
 type TimerId = number;
@@ -93,10 +95,12 @@ class Dashboard extends React.Component<Props> {
         }
     }
 
-    private handleStatisticsDownload() {
-        dispatchers.fetchStatistics((response) => fileDownload(response.data, "statistics.csv"),
-            (error) => console.error('Cannot fetch statistics: ' + error),
-            moment(this.props.dateTime));
+    handleStatisticsDownload() {
+        api.fetchStatistics(
+            (response: axios.AxiosResponse) => fileDownload(response.data, 'statistics.csv'),
+            (error: Error) => console.error('Cannot fetch statistics: ' + error),
+            this.props.dateTime != null ? moment(this.props.dateTime) : undefined
+        );
     }
 
     render() {
@@ -123,7 +127,9 @@ class Dashboard extends React.Component<Props> {
                                     />
                                 </CardBody>
                             </Card>
-                            <Button onClick={() => this.handleStatisticsDownload()} color="primary">{lang.downloadStatistics}</Button>
+                            <Button onClick={() => this.handleStatisticsDownload()} color="primary">
+                                {lang.downloadStatistics}
+                            </Button>
                         </Col>
                         <Col xl="5" lg="6" md="6" sm="12">
                             <Card>

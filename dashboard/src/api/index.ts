@@ -63,12 +63,14 @@ export class Api {
                             callback, errorHandler);
     }
 
-    fetchStatistics(time: Moment,
-       callback: SuccessCallback<ParkingList>,
-       errorHandler: ErrorHandler,
+    fetchStatistics(callback: Function,
+                    errorHandler: ErrorHandler,
+                    time?: Moment
     ): void {
         const timeParam = (time) ? '?time=' + time.toISOString() : '';
-        this._fetchAllPages(`${this.endpoints.statistics}${timeParam}`, callback, errorHandler);
+        this.axios.get(`${this.endpoints.statistics}${timeParam}`)
+            .then((response: axios.AxiosResponse) => callback(response))
+            .catch(errorHandler);
     }
 
     private _fetchAllPages(

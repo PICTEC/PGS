@@ -1,11 +1,10 @@
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
-from django.db import migrations
-from django.contrib.gis.geos import fromstr
 import requests
-import json
+from django.contrib.gis.geos import fromstr
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
 
 from parkings.models import EnforcementDomain, ParkingTerminal
+
 
 class Command(BaseCommand):
     help = "Import parking terminals"

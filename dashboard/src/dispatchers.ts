@@ -1,10 +1,10 @@
-import { Dispatch } from 'redux';
+import {Dispatch} from 'redux';
 import * as moment from 'moment';
 
 import * as actions from './actions';
 import api from './api';
-import { MapViewport } from './components/types';
-import { RootState } from './types';
+import {MapViewport} from './components/types';
+import {RootState} from './types';
 
 const updateInterval = 5 * 60 * 1000;  // 5 minutes in ms
 
@@ -35,7 +35,7 @@ export function initiateLogin(username: string, password: string) {
             (error) => {
                 dispatch(actions.receiveCodeTokenFailure(
                     `${error.response.statusText} `
-                        + `-- ${JSON.stringify(error.response.data)}`));
+                    + `-- ${JSON.stringify(error.response.data)}`));
             });
     };
 }
@@ -43,7 +43,7 @@ export function initiateLogin(username: string, password: string) {
 export function continueLogin(verificationCode: string) {
     return (dispatch: Dispatch<RootState>, getState: () => RootState) => {
         dispatch(actions.requestAuthToken());
-        const { codeToken } = getState().auth;
+        const {codeToken} = getState().auth;
         if (codeToken) {
             api.auth.continueLogin(codeToken, verificationCode).then(
                 (authToken) => {
@@ -52,7 +52,7 @@ export function continueLogin(verificationCode: string) {
                 (error) => {
                     dispatch(actions.receiveAuthTokenFailure(
                         `${error.response.statusText} `
-                            + `-- ${JSON.stringify(error.response.data)}`));
+                        + `-- ${JSON.stringify(error.response.data)}`));
                 });
         }
     };
@@ -127,7 +127,7 @@ export function fetchRegionStats(time: moment.Moment) {
             (response) => {
                 const results = response.data.results || [];
                 const needsRegion = results.some(
-                    (x: {id: string}) => (!(x.id in regions)));
+                    (x: { id: string }) => (!(x.id in regions)));
                 if (needsRegion) {
                     dispatch(fetchRegions());
                 }
@@ -162,4 +162,8 @@ export function fetchValidParkings(time: moment.Moment) {
                 alert('Valid parkings fetch failed: ' + error);
             });
     };
+}
+
+export function fetchStatistics(callback, errorHandler, time?) {
+    return api.fetchStatistics(time, callback, errorHandler);
 }

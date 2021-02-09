@@ -27,5 +27,6 @@
   "timeStart": "Aloitusaika",
   "timeEnd": "Loppumisaika",
   "createdAt": "Luotu",
-  "modifiedAt": "Päivitetty"
+  "modifiedAt": "Päivitetty",
+  "downloadStatistics": "Obtenez des statistiques"
 }

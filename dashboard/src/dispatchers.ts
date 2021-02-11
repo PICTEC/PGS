@@ -153,7 +153,7 @@ export function fetchParkingTerminals() {
                 dispatch(actions.receiveParkingTerminals(response.data));
             },
             (error) => {
-                alert('Region fetch failed: ' + error);
+                alert('Parking terminals fetch failed: ' + error);
             });
     };
 }

@@ -10,6 +10,7 @@ export function convertRegion(region: api.Region): uic.Region {
     const p = region.properties;
     const properties = (p) ? {
         name: p.name,
+        color: p.color,
         capacityEstimate: p.capacity_estimate,
         areaKm2: p.area_km2,
         spotsPerKm2: p.spots_per_km2,

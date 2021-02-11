@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 
-import { ParkingList, RegionList, RegionStatsList } from './api/types';
+import { ParkingList, ParkingTerminalsList, RegionList, RegionStatsList } from './api/types';
 import { MapViewport } from './components/types';
 
 interface CheckExistingLoginAction {
@@ -139,6 +139,14 @@ export function receiveValidParkings(
     return {type: 'RECEIVE_VALID_PARKINGS', data, time};
 }
 
+interface ReceiveParkingTerminalsAction {
+    type: 'RECEIVE_PARKING_TERMINALS';
+    data: ParkingTerminalsList;
+}
+export function receiveParkingTerminals(data: ParkingTerminalsList): ReceiveParkingTerminalsAction {
+    return {type: 'RECEIVE_PARKING_TERMINALS', data};
+}
+
 export type Action =
     CheckExistingLoginAction |
     ResolveExistingLoginCheckAction |
@@ -155,4 +163,5 @@ export type Action =
     SetSelectedRegionAction |
     ReceiveRegionStatsAction |
     ReceiveRegionInfoAction |
-    ReceiveValidParkingsAction;
+    ReceiveValidParkingsAction |
+    ReceiveParkingTerminalsAction;

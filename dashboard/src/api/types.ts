@@ -1,4 +1,5 @@
 import * as geojson from 'geojson';
+import { LatLngTuple } from 'leaflet';
 
 export interface AuthToken {
     token: string;
@@ -57,6 +58,7 @@ PaginatedList {
 
 export interface RegionProperties {
     name: string;
+    color: string;
     capacity_estimate: number;
     area_km2: number;
     spots_per_km2: number;
@@ -89,4 +91,20 @@ export interface ParkingProperties {
     time_end?: string|null;
     created_at: string;
     modified_at: string;
+}
+
+export interface ParkingTerminalsList extends PaginatedList {
+    results: ParkingTerminal[];
+}
+
+export interface ParkingTerminal {
+    number: number;
+    name: string;
+    location: Location;
+    domain: string;
+}
+
+export interface Location {
+    type: string;
+    coordinates: LatLngTuple;
 }

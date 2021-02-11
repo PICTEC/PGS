@@ -121,16 +121,11 @@ export function setSelectedRegion(regionId: string) {
 
 export function fetchRegionStats(time: moment.Moment) {
     return (dispatch: Dispatch<RootState>, getState: () => RootState) => {
-        const {regions} = getState();
         api.fetchRegionStats(
             time,
             (response) => {
-                const results = response.data.results || [];
-                const needsRegion = results.some(
-                    (x: { id: string }) => (!(x.id in regions)));
-                if (needsRegion) {
-                    dispatch(fetchRegions());
-                }
+                dispatch(fetchParkingTerminals());
+                dispatch(fetchRegions());
                 dispatch(actions.receiveRegionStats(response.data, time));
             },
             (error) => {
@@ -144,6 +139,18 @@ export function fetchRegions() {
         api.fetchRegions(
             (response) => {
                 dispatch(actions.receiveRegionInfo(response.data));
+            },
+            (error) => {
+                alert('Region fetch failed: ' + error);
+            });
+    };
+}
+
+export function fetchParkingTerminals() {
+    return (dispatch: Dispatch<RootState>) => {
+        api.fetchParkingTerminals(
+            (response) => {
+                dispatch(actions.receiveParkingTerminals(response.data));
             },
             (error) => {
                 alert('Region fetch failed: ' + error);

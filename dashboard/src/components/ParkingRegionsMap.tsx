@@ -54,7 +54,7 @@ export default class ParkingRegionsMap extends React.Component<Props> {
             iconUrl: 'parking-terminal.svg',
             iconSize: [64, 64],
         });
-        const terminalsGeoJson = this.props.terminals
+        const terminalsMarkers = this.props.terminals
             ? this.props.terminals.map((terminal) => (
                     <ReactLeaflet.Marker icon={terminalIcon} position={terminal.location.coordinates} />
                 ))
@@ -83,7 +83,7 @@ export default class ParkingRegionsMap extends React.Component<Props> {
                 <ReactLeaflet.LayerGroup>
                     {regionsGeoJson}
                     <MarkerClusterGroup maxClusterRadius={(zoom) => (zoom > 8 ? 10 : 80)}>
-                        {terminalsGeoJson}
+                        {terminalsMarkers}
                     </MarkerClusterGroup>
                 </ReactLeaflet.LayerGroup>
             </Map>);

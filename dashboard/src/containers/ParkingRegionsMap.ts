@@ -13,6 +13,7 @@ function mapStateToProps(state: RootState): Partial<Props> {
         center: viewState.center,
         zoom: viewState.zoom,
         regions: getRegions(state),
+        terminals: state.parkingTerminals
     };
 }
 

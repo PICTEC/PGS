@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import { Moment } from 'moment';
 
 import AuthManager from './auth-manager';
-import { ParkingList, RegionList, RegionStatsList } from './types';
+import { ParkingList, ParkingTerminalsList, RegionList, RegionStatsList } from './types';
 
 interface SuccessCallback<T> {
     (response: axios.AxiosResponse<T>): void;
@@ -17,7 +17,8 @@ export class Api {
         authCodeToken: '/auth/v1/get-code/',
         authAuthToken: '/auth/v1/auth/',
         authRefresh: '/auth/v1/refresh/',
-        regions: '/monitoring/v1/region/',
+        regions: '/public/v1/regions/',
+        terminals: '/public/v1/terminals/',
         regionStats: '/monitoring/v1/region_statistics/',
         validParkings: '/monitoring/v1/valid_parking/',
         statistics: '/monitoring/v1/statistics/',
@@ -41,6 +42,13 @@ export class Api {
         errorHandler: ErrorHandler
     ) {
         this._fetchAllPages(this.endpoints.regions, callback, errorHandler);
+    }
+
+    fetchParkingTerminals(
+        callback: SuccessCallback<ParkingTerminalsList>,
+        errorHandler: ErrorHandler
+    ) {
+        this._fetchAllPages(this.endpoints.terminals, callback, errorHandler);
     }
 
     fetchRegionStats(

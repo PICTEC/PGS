@@ -1,4 +1,5 @@
 import * as geojson from 'geojson';
+import { ParkingTerminal } from './api/types';
 
 import { Region, MapViewport } from './components/types';
 
@@ -18,6 +19,7 @@ export interface RootState {
     regions: RegionsMap;
 
     parkings: ParkingsMap;
+    parkingTerminals: ParkingTerminal[];
 
     regionUsageHistory: RegionUsageHistory;
     validParkingsHistory: ValidParkingsHistory;

@@ -20,6 +20,7 @@ geojson.Feature<geojson.MultiPolygon, RegionProperties> {
 
 export interface RegionProperties {
     name: string;
+    color: string;
     capacityEstimate: number;
     areaKm2: number;
     spotsPerKm2: number;

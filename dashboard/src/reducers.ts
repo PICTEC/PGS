@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { combineReducers } from 'redux';
 
 import { Action } from './actions';
+import { ParkingTerminal } from './api/types';
 import { centerCoordinates } from './config';
 import * as conv from './converters';
 import {
@@ -151,6 +152,13 @@ function parkings(state: ParkingsMap = {}, action: Action): ParkingsMap {
     return state;
 }
 
+function parkingTerminals(state: ParkingTerminal[] = [], action: Action): ParkingTerminal[] {
+    if (action.type === 'RECEIVE_PARKING_TERMINALS') {
+        return [...action.data.results];
+    }
+    return state;
+}
+
 function regionUsageHistory(
     state: RegionUsageHistory = {},
     action: Action
@@ -201,6 +209,7 @@ const rootReducer: ((state: RootState, action: Action) => RootState) =
         selectedRegion,
         regions,
         parkings,
+        parkingTerminals,
         regionUsageHistory,
         validParkingsHistory,
     });

@@ -42,6 +42,7 @@ class RegionSerializer(gis_serializers.GeoFeatureModelSerializer):
         fields = [
             'id',
             'name',
+            'color',
             'capacity_estimate',
             'area_km2',
             'spots_per_km2',

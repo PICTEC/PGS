@@ -1,12 +1,12 @@
-import * as chroma from 'chroma-js';
 import * as geojson from 'geojson';
+import * as L from 'leaflet';
 import * as Leaflet from 'leaflet';
 import * as React from 'react';
 import * as ReactLeaflet from 'react-leaflet';
-
-import { MapViewport, Point, Region, RegionProperties } from './types';
-
+import { ParkingTerminal } from 'src/api/types';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
 import './ParkingRegionsMap.css';
+import { MapViewport, Point, Region, RegionProperties } from './types';
 
 let langFile = require('../languages/en-EN.json');
 var language = window.navigator.language;
@@ -33,6 +33,7 @@ export interface Props {
     center: Point;
     zoom: number;
     regions?: Region[];
+    terminals?: ParkingTerminal[];
     onRegionClicked?: (region: Region) => void;
     onViewportChanged?: (viewport: MapViewport) => void;
 }
@@ -41,7 +42,7 @@ export default class ParkingRegionsMap extends React.Component<Props> {
     private map?: ReactLeaflet.Map;
 
     render() {
-        const geoJsonElement = this.props.regions ? (
+        const regionsGeoJson = this.props.regions ? (
             <ReactLeaflet.GeoJSON
                 key={getKeyForRegions(this.props.regions)}
                 data={getFeatureCollection(this.props.regions)}
@@ -49,6 +50,16 @@ export default class ParkingRegionsMap extends React.Component<Props> {
                 onEachFeature={this.bindPopupToRegion}
             />
         ) : null;
+        const terminalIcon = L.icon({
+            iconUrl: 'parking-terminal.svg',
+            iconSize: [64, 64],
+        });
+        const terminalsMarkers = this.props.terminals
+            ? this.props.terminals.map((terminal) => (
+                    <ReactLeaflet.Marker icon={terminalIcon} position={terminal.location.coordinates} />
+                ))
+            : null;
+            
         const osmAttribution = (
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
             + ' contributors');
@@ -69,7 +80,12 @@ export default class ParkingRegionsMap extends React.Component<Props> {
                     imperial={false}
                     maxWidth={150}
                 />
-                {geoJsonElement}
+                <ReactLeaflet.LayerGroup>
+                    {regionsGeoJson}
+                    <MarkerClusterGroup maxClusterRadius={(zoom) => (zoom > 8 ? 10 : 80)}>
+                        {terminalsMarkers}
+                    </MarkerClusterGroup>
+                </ReactLeaflet.LayerGroup>
             </Map>);
     }
 
@@ -163,44 +179,13 @@ function getStyleForRegion(region: Region) {
     const borderWeight = (isSelected) ? 3 : 1;
     const borderColor = (isSelected) ? '#0000ff' : '#000000';
     const borderOpacity = (isSelected) ? 0.8 : 0.6;
-    const fillColor = getColorForRegion(props);
-    const fillOpacity = getOpacityForRegion(props);
+    const fillColor = props ? props.color : '#0000ff';
     return {
         dashArray: (isSelected) ? undefined : '3',
         weight: borderWeight,
         color: borderColor,
         opacity: borderOpacity,
         fillColor: fillColor,
-        fillOpacity: fillOpacity,
+        fillOpacity: 0.6,
     };
-}
-
-function getColorForRegion(props?: RegionProperties|null): string|undefined {
-    const usage = getUsageFactorForRegion(props);
-    return (usage != null) ? getColorFromGreenToRed(usage) : undefined;
-}
-
-function getOpacityForRegion(props?: RegionProperties|null): number {
-    const usageFactor = getUsageFactorForRegion(props);
-    if (usageFactor == null) {
-        return 0;
-    }
-    const usageFactor0To1 = Math.min(Math.max(usageFactor, 0), 1);
-    return 0.25 + (usageFactor0To1 / 2);
-}
-
-function getUsageFactorForRegion(
-    props?: RegionProperties|null
-): number|undefined {
-    if (!props || !props.parkingCount || !props.areaKm2) {
-        return undefined;
-    }
-
-    const parkingsPerKm2 = props.parkingCount / props.areaKm2;
-    return parkingsPerKm2 / 100.0;
-}
-
-function getColorFromGreenToRed(ratio: number): string {
-    const truncated = Math.min(Math.max(ratio, 0), 1);
-    return chroma.scale(['#6d1', '#c21'])(truncated).hex();
 }

@@ -7,6 +7,8 @@ from ..common import WGS84InBBoxFilter
 from .permissions import IsMonitor
 
 WGS84_SRID = 4326
+# a standard with a unit of meters
+WGS84_NFS = 7755
 
 # Square meters in square kilometer
 M2_PER_KM2 = 1000000.0
@@ -22,14 +24,17 @@ class RegionSerializer(gis_serializers.GeoFeatureModelSerializer):
         return instance.geom.transform(WGS84_SRID, clone=True)
 
     def get_area_km2(self, instance):
-        return instance.geom.area / M2_PER_KM2
+        return self.get_area_in_meters(instance) / M2_PER_KM2
 
     def get_spots_per_km2(self, instance):
-        return M2_PER_KM2 * instance.capacity_estimate / instance.geom.area
+        return M2_PER_KM2 * instance.capacity_estimate / self.get_area_in_meters(instance)
 
     def get_parking_areas(self, instance):
         parking_areas = ParkingArea.objects.intersecting_region(instance)
         return [x.pk for x in parking_areas]
+
+    def get_area_in_meters(self, instance):
+        return instance.geom.transform(WGS84_NFS, clone=True).area
 
     class Meta:
         model = Region

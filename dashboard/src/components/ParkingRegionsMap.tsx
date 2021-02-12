@@ -81,11 +81,10 @@ export default class ParkingRegionsMap extends React.Component<Props> {
         if (!props) {
             return;
         }
-        const capacityEstimateFromArea = Math.round(props.areaKm2 * 1000);
-        const capacity = props.capacityEstimate || capacityEstimateFromArea;
+        const capacity = props.capacityEstimate;
         const count = props.parkingCount || 0;
         const parkingsPerKm2 = count / props.areaKm2;
-        const usagePercentage = 100 * count / capacity;
+        const usagePercentage = capacity !== 0 ? (100 * count / capacity) : 100;
         layer.on('click', (event) => {
             if (this.props.onRegionClicked) {
                 this.props.onRegionClicked(region);
@@ -98,8 +97,6 @@ export default class ParkingRegionsMap extends React.Component<Props> {
               ${props.areaKm2.toFixed(2)} km<sup>2</sup><br>
             <b>${lang.capacityEstimate}</b>:
               ${props.capacityEstimate}<br>
-            <b>${lang.capacityEstimateFromArea}</b>:
-              ${capacityEstimateFromArea}<br>
             <b>${lang.spotsPerKm2}</b>:
               ${props.spotsPerKm2.toFixed(2)}<br>
             <hr>

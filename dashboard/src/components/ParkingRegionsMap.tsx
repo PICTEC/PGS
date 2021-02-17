@@ -55,8 +55,11 @@ export default class ParkingRegionsMap extends React.Component<Props> {
             iconSize: [64, 64],
         });
         const terminalsMarkers = this.props.terminals
-            ? this.props.terminals.map((terminal) => (
-                    <ReactLeaflet.Marker icon={terminalIcon} position={terminal.location.coordinates} />
+            ? this.props.terminals
+                .map((terminal) => terminal.location.coordinates)
+                .map((coordinates) => [coordinates[1], coordinates[0]] as L.LatLngTuple)
+                .map((coordinates) => (
+                    <ReactLeaflet.Marker icon={terminalIcon} position={coordinates} />
                 ))
             : null;
             

@@ -147,6 +147,13 @@ export function receiveParkingTerminals(data: ParkingTerminalsList): ReceivePark
     return {type: 'RECEIVE_PARKING_TERMINALS', data};
 }
 
+interface ClearParkingTerminalsAction  {
+    type: 'CLEAR_PARKING_TERMINALS';
+}
+export function clearParkingTerminals(): ClearParkingTerminalsAction {
+    return {type: 'CLEAR_PARKING_TERMINALS'};
+}
+
 export type Action =
     CheckExistingLoginAction |
     ResolveExistingLoginCheckAction |
@@ -164,4 +171,5 @@ export type Action =
     ReceiveRegionStatsAction |
     ReceiveRegionInfoAction |
     ReceiveValidParkingsAction |
-    ReceiveParkingTerminalsAction;
+    ReceiveParkingTerminalsAction |
+    ClearParkingTerminalsAction;

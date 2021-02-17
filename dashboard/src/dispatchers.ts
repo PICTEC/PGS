@@ -150,6 +150,7 @@ export function fetchParkingTerminals() {
     return (dispatch: Dispatch<RootState>) => {
         api.fetchParkingTerminals(
             (response) => {
+                dispatch(actions.clearParkingTerminals());
                 dispatch(actions.receiveParkingTerminals(response.data));
             },
             (error) => {

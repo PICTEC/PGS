@@ -154,7 +154,9 @@ function parkings(state: ParkingsMap = {}, action: Action): ParkingsMap {
 
 function parkingTerminals(state: ParkingTerminal[] = [], action: Action): ParkingTerminal[] {
     if (action.type === 'RECEIVE_PARKING_TERMINALS') {
-        return [...action.data.results];
+        return [...state,  ...action.data.results];
+    } else if (action.type === 'CLEAR_PARKING_TERMINALS') {
+        return [];
     }
     return state;
 }

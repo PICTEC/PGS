@@ -148,9 +148,9 @@ export function fetchRegions() {
 
 export function fetchParkingTerminals() {
     return (dispatch: Dispatch<RootState>) => {
+        dispatch(actions.clearParkingTerminals());
         api.fetchParkingTerminals(
             (response) => {
-                dispatch(actions.clearParkingTerminals());
                 dispatch(actions.receiveParkingTerminals(response.data));
             },
             (error) => {

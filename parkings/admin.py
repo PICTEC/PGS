@@ -9,14 +9,19 @@ from .models import (
     PermitArea, PermitLookupItem, PermitSeries, Region)
 
 
+class OSMGeoAdminResized(OSMGeoAdmin):
+    map_width = 900
+    map_height = 600
+
+
 @admin.register(Enforcer)
-class EnforcerAdmin(WithAreaField, OSMGeoAdmin):
+class EnforcerAdmin(WithAreaField, OSMGeoAdminResized):
     list_display = ['id', 'name', 'user', 'enforced_domain']
     ordering = ('name',)
 
 
 @admin.register(EnforcementDomain)
-class EnforcementDomainAdmin(WithAreaField, OSMGeoAdmin):
+class EnforcementDomainAdmin(WithAreaField, OSMGeoAdminResized):
     list_display = ['id', 'code', 'name', 'area']
     ordering = ('code',)
 
@@ -33,14 +38,14 @@ class OperatorAdmin(admin.ModelAdmin):
 
 
 @admin.register(PaymentZone)
-class PaymentZoneAdmin(WithAreaField, OSMGeoAdmin):
+class PaymentZoneAdmin(WithAreaField, OSMGeoAdminResized):
     list_display = ['id', 'domain', 'number', 'name', 'area']
     list_filter = ['domain']
     ordering = ('number',)
 
 
 @admin.register(Parking, ArchivedParking)
-class ParkingAdmin(OSMGeoAdmin):
+class ParkingAdmin(OSMGeoAdminResized):
     date_hierarchy = 'time_start'
     list_display = [
         'id', 'operator', 'domain', 'zone', 'parking_area', 'terminal_number',
@@ -52,14 +57,14 @@ class ParkingAdmin(OSMGeoAdmin):
 
 
 @admin.register(Region)
-class RegionAdmin(WithAreaField, OSMGeoAdmin):
+class RegionAdmin(WithAreaField, OSMGeoAdminResized):
     list_display = ['id', 'domain', 'name', 'capacity_estimate', 'area']
     list_filter = ['domain']
     ordering = ('name',)
 
 
 @admin.register(ParkingArea)
-class ParkingAreaAdmin(WithAreaField, OSMGeoAdmin):
+class ParkingAreaAdmin(WithAreaField, OSMGeoAdminResized):
     area_scale = 1
     list_display = ['id', 'origin_id', 'domain', 'capacity_estimate', 'area']
     list_filter = ['domain']
@@ -67,7 +72,7 @@ class ParkingAreaAdmin(WithAreaField, OSMGeoAdmin):
 
 
 @admin.register(ParkingCheck)
-class ParkingCheckAdmin(ReadOnlyAdmin, OSMGeoAdmin):
+class ParkingCheckAdmin(ReadOnlyAdmin, OSMGeoAdminResized):
     list_display = [
         'id', 'time', 'registration_number', 'location',
         'allowed', 'result', 'performer', 'created_at']
@@ -88,7 +93,7 @@ class ParkingCheckAdmin(ReadOnlyAdmin, OSMGeoAdmin):
 
 
 @admin.register(ParkingTerminal)
-class ParkingTerminalAdmin(OSMGeoAdmin):
+class ParkingTerminalAdmin(OSMGeoAdminResized):
     list_display = ['id', 'domain', 'number', 'name']
     list_filter = ['domain']
 
@@ -111,7 +116,7 @@ class PermitAdmin(admin.ModelAdmin):
 
 
 @admin.register(PermitArea)
-class PermitAreaAdmin(WithAreaField, OSMGeoAdmin):
+class PermitAreaAdmin(WithAreaField, OSMGeoAdminResized):
     list_display = ['id', 'domain', 'identifier', 'name', 'area']
     list_filter = ['domain']
     ordering = ('identifier',)

@@ -3,6 +3,7 @@ from django.contrib.gis.admin import OSMGeoAdmin
 from django.db import models
 
 from .admin_utils import ReadOnlyAdmin, WithAreaField
+from .forms.parking_terminal_form import ParkingTerminalForm
 from .models import (
     ArchivedParking, EnforcementDomain, Enforcer, Monitor, Operator, Parking,
     ParkingArea, ParkingCheck, ParkingTerminal, PaymentZone, Permit,
@@ -96,6 +97,7 @@ class ParkingCheckAdmin(ReadOnlyAdmin, OSMGeoAdminResized):
 class ParkingTerminalAdmin(OSMGeoAdminResized):
     list_display = ['id', 'domain', 'number', 'name']
     list_filter = ['domain']
+    form = ParkingTerminalForm
 
 
 @admin.register(Permit)

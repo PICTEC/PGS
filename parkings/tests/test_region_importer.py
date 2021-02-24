@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from parkings.importers.regions import ShapeFileToRegionImporter
 from parkings.management.commands import import_regions
 from parkings.models import Region
+from parkkihubi_hel.importers.regions import ShapeFileToRegionImporter
 
 from .utils import approx, call_mgmt_cmd_with_output
 

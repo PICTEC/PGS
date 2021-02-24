@@ -53,7 +53,7 @@ import argparse
 
 from django.core.management.base import BaseCommand
 
-from ...importers.regions import ShapeFileToRegionImporter
+from parkkihubi_hel.importers.regions import ShapeFileToRegionImporter
 
 
 class Command(BaseCommand):

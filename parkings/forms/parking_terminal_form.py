@@ -27,7 +27,7 @@ class ParkingTerminalForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         coordinates = self.initial.get('location', None)
         if isinstance(coordinates, Point):
-            self.initial['latitude'], self.initial['longitude'] = coordinates.tuple
+            self.initial['longitude'], self.initial['latitude'] = coordinates.tuple
 
     def clean(self):
         data = super().clean()
@@ -35,7 +35,7 @@ class ParkingTerminalForm(forms.ModelForm):
         longitude = data.get('longitude')
         point = data.get('location')
         if self._use_coordinates_instead_of_point(latitude, longitude, point):
-            data['location'] = Point(x=latitude, y=longitude)
+            data['location'] = Point(x=longitude, y=latitude)
         return data
 
     def _use_coordinates_instead_of_point(self, latitude, longitude, point):

@@ -11,9 +11,9 @@ info:
     contents might change before the final non-review version.
   version: "1.2.0.rc3.2020-05-18"
 servers:
-  - url: https://api.parkkiopas.fi/operator/v1/
+  - url: https://pgs.prod.dac.systems/operator/v1/
     description: Production server
-  - url: https://testapi.parkkiopas.fi/operator/v1/
+  - url: http://localhost:8000/operator/v1/
     description: Test server
   - url: http://localhost:8000/operator/v1/
     description: Local development server

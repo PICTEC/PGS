@@ -11,9 +11,9 @@ info:
     contents might change before the final non-review version.
   version: "1.2.0.rc3.2020-05-18"  # remove above warning when releasing 1.2.0
 servers:
-  - url: https://api.parkkiopas.fi/enforcement/v1/
+  - url: https://pgs.prod.dac.systems/enforcement/v1/
     description: Production server
-  - url: https://testapi.parkkiopas.fi/enforcement/v1/
+  - url: http://localhost:8000/enforcement/v1/
     description: Test server
   - url: http://localhost:8000/enforcement/v1/
     description: Local development server
@@ -488,7 +488,7 @@ paths:
                 type: object
                 example:
                   count: 100
-                  next: "https://api.parkkiopas.fi/enforcement/v1/valid_permit_item/?page=2"
+                  next: "http://localhost:8000/enforcement/v1/valid_permit_item/?page=2"
                   previous: null
                   results:
                     - << : *validPermitItemExample

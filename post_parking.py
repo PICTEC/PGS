@@ -18,7 +18,8 @@ parkingExample = {
     "registration_number": "Test-001",
     "time_end": "2019-12-03T01:00:00Z",
     "time_start": "2019-12-01T10:00:00Z",
-    "zone": 3
+    "zone": 3,
+    "domain": "KLP"
 }
 
 if __name__ == '__main__':

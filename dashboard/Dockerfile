@@ -1,4 +1,4 @@
-FROM node as builder
+FROM node:17 as builder
 COPY . usr/src/app
 
 ENV REACT_APP_SERVICE_PORT=80

@@ -1,4 +1,5 @@
 import requests
+import json
 from django.contrib.gis.geos import fromstr
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -13,22 +14,45 @@ class Command(BaseCommand):
         parser.add_argument(
             'address', type=str,
             help=('Addres from where get parking areas')
-        )
+            )
         parser.add_argument(
-            'local', type=str, default='False',
-            help=('If the address refer to file on local drive')
-        )
+            '--local',
+            action='store_true',
+            help=('If the address refer to file on local drive'),
+            )
+        parser.add_argument(
+            '--srid', 
+            '-s', 
+            type=int, 
+            default=4326,
+            )
+        parser.add_argument(
+            '--domain', 
+            '-d', 
+            type=str, 
+            default=None,
+            )
+
     def handle(self, *args, **options):
-        local = options['local'].lower() in ['true', '1', 't', 'y', 'yes']
-        if local:
-            call_command('loaddata', options['address'], verbosity=0)
+        if options['domain'] is None:
+            options['domain'] = EnforcementDomain.get_default_domain()
+        
+        if options['local']:
+            #call_command('loaddata', options['address'], verbosity=0, do)
+            with open(options['address'], 'r') as file:
+                for terminal_dict in json.load(file):
+                    terminal = ParkingTerminal.objects.update_or_create(
+                        domain=options['domain'],
+                        number=terminal_dict['fields']['number'],
+                        name=terminal_dict['fields']['name'],
+                        location=fromstr(terminal_dict['fields']['location'], srid=options['srid']),
+                        )    
         else:
-            domain = EnforcementDomain.get_default_domain()
             r = requests.get(options['address'], allow_redirects=True)
             for terminal_dict in r.json():
                 terminal = ParkingTerminal.objects.update_or_create(
-                    domain=domain,
-                    number=terminal_dict['fields']['number'],
-                    name=terminal_dict['fields']['name'],
-                    location=fromstr(terminal_dict['fields']['location'], srid=4326),
-                )
+                        domain=options['domain'],
+                        number=terminal_dict['fields']['number'],
+                        name=terminal_dict['fields']['name'],
+                        location=fromstr(terminal_dict['fields']['location'], srid=options['srid']),
+                        )

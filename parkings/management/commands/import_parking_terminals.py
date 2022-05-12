@@ -45,7 +45,7 @@ class Command(BaseCommand):
                         domain=options['domain'],
                         number=terminal_dict['fields']['number'],
                         name=terminal_dict['fields']['name'],
-                        location=fromstr(terminal_dict['fields']['location'], srid=options['srid']),
+                        location=fromstr(terminal_dict['fields']['location']),
                         )    
         else:
             r = requests.get(options['address'], allow_redirects=True)
@@ -54,5 +54,5 @@ class Command(BaseCommand):
                         domain=options['domain'],
                         number=terminal_dict['fields']['number'],
                         name=terminal_dict['fields']['name'],
-                        location=fromstr(terminal_dict['fields']['location'], srid=options['srid']),
+                        location=fromstr(terminal_dict['fields']['location']),
                         )

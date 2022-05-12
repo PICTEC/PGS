@@ -46,7 +46,8 @@ Below are shown how geospatial data should be formated.
   {
     "type": "Feature",
     "properties": {
-      "origin_id": INT
+      "origin_id": INT,
+      "capacity_estimate": INT,
     },
     "geometry": {
       "type": "MultiPolygon",
@@ -71,7 +72,8 @@ Below are shown how geospatial data should be formated.
       },
       "properties": {
         "name": "STRING",
-        "number": INT
+        "number": INT,
+        "ID": INT
       }
     }, ...
   ]
@@ -87,7 +89,8 @@ Below are shown how geospatial data should be formated.
       {
         "type": "Feature",
         "properties": {
-          "name": "STRING"
+          "name": "STRING",
+          "color": "STRING"
         },
         "geometry": {
           "type": "MultiPolygon",

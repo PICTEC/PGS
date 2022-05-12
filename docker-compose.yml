@@ -11,6 +11,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER_RUNTIME=${DB_USER_RUNTIME}
       - DB_RUNTIME_PASSWORD=${DB_RUNTIME_PASSWORD}
+      - DB_BACKUP_FILE=${DB_BACKUP_FILE}
     ports:
       - "5432:5432"
     volumes:

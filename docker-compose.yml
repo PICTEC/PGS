@@ -13,8 +13,6 @@ services:
       - DB_RUNTIME_PASSWORD=${DB_RUNTIME_PASSWORD}
     ports:
       - "5432:5432"
-    volumes:
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
   web:
     links:
